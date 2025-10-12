@@ -7,9 +7,17 @@
     <meta name="csrf-token" content="{{ csrf_token() }}">
     <title>{{ config('app.name', 'LMS App') }} - @yield('title')</title>
 
+    <!-- Fonts -->
+    <link rel="preconnect" href="https://fonts.bunny.net">
+    <link href="https://fonts.bunny.net/css?family=inter:400,500,600,700,800|pacifico:400" rel="stylesheet" />
+
     <!-- Tailwind CSS CDN -->
     <script src="https://cdn.tailwindcss.com"></script>
-
+    <style>
+        .brand-logo {
+            font-family: 'Pacifico', cursive;
+        }
+    </style>
     <!-- Custom CSS -->
     @stack('styles')
 </head>
@@ -22,8 +30,8 @@
                 <div class="flex">
                     <!-- Logo -->
                     <div class="flex-shrink-0 flex items-center">
-                        <a href="/" class="text-2xl font-bold text-blue-600">
-                            LMS App
+                        <a href="/" class="text-3xl font-bold text-blue-600 brand-logo">
+                            Luminix
                         </a>
                     </div>
 
@@ -97,6 +105,21 @@
 
     <!-- Custom Scripts -->
     @stack('scripts')
+
+    <!-- Mobile Menu Toggle Script -->
+    <script>
+        // Mobile menu toggle
+        document.addEventListener('DOMContentLoaded', function () {
+            const mobileMenuButton = document.querySelector('button[type="button"]');
+            const mobileMenu = document.getElementById('mobile-menu');
+
+            if (mobileMenuButton && mobileMenu) {
+                mobileMenuButton.addEventListener('click', function () {
+                    mobileMenu.classList.toggle('hidden');
+                });
+            }
+        });
+    </script>
 </body>
 
 </html>

@@ -56,9 +56,6 @@ class ChapterProgress extends Model
         $this->is_completed = true;
         $this->completed_at = now();
         $this->save();
-
-        // Update enrollment progress
-        $this->updateEnrollmentProgress();
     }
 
     /**
@@ -69,9 +66,6 @@ class ChapterProgress extends Model
         $this->is_completed = false;
         $this->completed_at = null;
         $this->save();
-
-        // Update enrollment progress
-        $this->updateEnrollmentProgress();
     }
 
     /**

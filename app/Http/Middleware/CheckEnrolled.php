@@ -16,21 +16,29 @@ class CheckEnrolled
      */
     public function handle(Request $request, Closure $next): Response
     {
-        // Ambil course dari route parameter
         $course = $request->route('course');
+        $chapter = $request->route('chapter');
+
+        // Jika tidak ada course di route, coba ambil dari chapter
+        if (!$course && $chapter) {
+            $course = $chapter->course;
+        }
 
         // Jika course adalah slug (string), cari course by slug
         if (is_string($course)) {
             $course = Course::where('slug', $course)->firstOrFail();
         }
 
-        // Cek apakah user sudah enroll ke kursus ini
-        $isEnrolled = $course->isEnrolledBy(auth()->id());
+        // Jika setelah semua usaha course tetap tidak ditemukan, beri 404
+        if (!$course) {
+            abort(404, 'Course not found.');
+        }
 
-        if (!$isEnrolled) {
+        // Cek apakah user sudah enroll ke kursus ini
+        if (!auth()->check() || !$course->isEnrolledBy(auth()->id())) {
             return redirect()
                 ->route('courses.show', $course->slug)
-                ->with('error', 'You must enroll in this course first!');
+                ->with('error', 'You must enroll in this course to view this page.');
         }
 
         return $next($request);
