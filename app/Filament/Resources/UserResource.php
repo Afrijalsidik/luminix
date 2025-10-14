@@ -61,6 +61,18 @@ class UserResource extends Resource
                             ->required(fn(string $context): bool => $context === 'create')
                             ->maxLength(255)
                             ->helperText('Leave empty to keep current password (when editing).'),
+
+                        Forms\Components\FileUpload::make('avatar')
+                            ->label('Foto Profil')
+                            ->image()
+                            ->directory('avatars')
+                            ->visibility('public')
+                            ->maxSize(2048)
+                            ->imagePreviewHeight('120')
+                            ->imageCropAspectRatio('1:1')
+                            ->imageResizeTargetWidth('400')
+                            ->imageResizeTargetHeight('400')
+                            ->columnSpanFull(),
                     ])
                     ->columns(2),
             ]);
@@ -70,6 +82,14 @@ class UserResource extends Resource
     {
         return $table
             ->columns([
+                Tables\Columns\ImageColumn::make('avatar')
+                    ->label('Avatar')
+                    ->circular()
+                    ->size(40)
+                    ->defaultImageUrl(fn($record) => 'https://ui-avatars.com/api/?name=' . urlencode($record->name) . '&background=random&color=fff')
+                    ->getStateUsing(fn($record) => $record->avatar ? asset('storage/' . $record->avatar) : null),
+
+
                 Tables\Columns\TextColumn::make('name')
                     ->searchable()
                     ->sortable(),

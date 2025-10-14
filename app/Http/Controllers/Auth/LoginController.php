@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Auth;
 
 use App\Http\Controllers\Controller;
+use App\Http\Requests\LoginRequest;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
@@ -19,13 +20,11 @@ class LoginController extends Controller
     /**
      * Handle login request
      */
-    public function login(Request $request)
+    public function login(LoginRequest $request)
     {
-        // Validasi input
-        $credentials = $request->validate([
-            'email' => ['required', 'email'],
-            'password' => ['required'],
-        ]);
+
+        // validasi input
+        $credentials = $request->validated();
 
         // Coba login dengan remember me
         if (Auth::attempt($credentials, $request->filled('remember'))) {
@@ -45,7 +44,7 @@ class LoginController extends Controller
 
         // Login gagal
         return back()->withErrors([
-            'email' => 'The provided credentials do not match our records.',
+            'email' => 'Email atau password salah',
         ])->onlyInput('email');
     }
 

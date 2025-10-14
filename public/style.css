@@ -1,0 +1,39 @@
+:root {
+  --grey-900: #1d2026;
+  --grey-800: #363b47;
+  --grey-700: #4e5566;
+  --white: #ffffff;
+
+  --primary-900: #33140b;
+  --primary-800: #662916;
+  --primary-700: #993d20;
+  --primary-500: #ff6636;
+
+  --secondary-900: #111033;
+  --secondary-800: #222065;
+  --secondary-700: #342f98;
+  --secondary-500: #564ffd;
+
+  --success-900: #07260a;
+  --success-800: #0e4c14;
+  --success-700: #15711f;
+  --success-500: #23bd33;
+
+  --warning-900: #331d06;
+  --warning-800: #65390c;
+  --warning-700: #985613;
+  --warning-500: #fd8e1f;
+
+  --danger-900: #2d0e0e;
+  --danger-800: #5b1b1b;
+  --danger-700: #882929;
+  --danger-500: #e34444;
+}
+
+.brand-logo {
+  font-family: "Pacifico", cursive;
+}
+
+body {
+  font-family: "Inter", sans-serif;
+}

@@ -34,7 +34,7 @@ Route::get('/search', [CourseController::class, 'search'])->name('courses.search
 Route::middleware('guest')->group(function () {
     // Login
     Route::get('/login', [LoginController::class, 'showLoginForm'])->name('login');
-    Route::post('/login', [LoginController::class, 'login']);
+    Route::post('/login', [LoginController::class, 'login'])->middleware('throttle:5,1');
 
     // Register
     Route::get('/register', [RegisterController::class, 'showRegistrationForm'])->name('register');
