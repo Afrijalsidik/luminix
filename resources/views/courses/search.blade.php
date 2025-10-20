@@ -1,4 +1,4 @@
-@extends('layouts.app')
+@extends('layouts.frontend')
 
 @section('title', 'Search Results')
 
@@ -15,7 +15,7 @@
         </div>
 
         <!-- Search Bar -->
-        <div class="bg-white rounded-lg shadow p-4 mb-6">
+        <!-- <div class="bg-white rounded-lg shadow p-4 mb-6">
             <form action="{{ route('courses.search') }}" method="GET">
                 <div class="flex gap-2">
                     <input 
@@ -33,7 +33,9 @@
                     </button>
                 </div>
             </form>
-        </div>
+        </div> -->
+
+        <hr class="border border-gray-300 mb-4">
 
         <!-- Results Grid -->
         <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
@@ -83,6 +85,12 @@
                 </div>
             @endforelse
         </div>
+
+        <!-- Footer Text -->
+            <p class="text-center text-gray-500 mt-10">
+                We have more category & subcategory.
+                <a href="{{ route('courses.index') }}" class="text-orange-500 font-medium hover:underline">Browse All →</a>
+            </p>
 
         <!-- Pagination -->
         @if($courses->hasPages())

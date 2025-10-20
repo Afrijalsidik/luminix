@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\SetingController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Auth\LoginController;
 use App\Http\Controllers\Auth\RegisterController;
@@ -57,6 +58,12 @@ Route::middleware(['auth'])->group(function () {
     // Enrollment
     Route::post('/courses/{course}/enroll', [EnrollmentController::class, 'enroll'])->name('courses.enroll');
     Route::delete('/courses/{course}/unenroll', [EnrollmentController::class, 'unenroll'])->name('courses.unenroll');
+
+    // setting
+    Route::get('/setting', [SetingController::class, 'index'])->name('setting');
+    Route::post('/setting/update', [SetingController::class, 'update'])->name('setting.update');
+    Route::put('/setting/avatar', [SetingController::class, 'updateAvatar'])->name('setting.updateAvatar');
+
 
     // Learning (hanya untuk enrolled students)
     Route::middleware(['enrolled'])->group(function () {

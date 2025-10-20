@@ -5,7 +5,7 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <meta name="csrf-token" content="{{ csrf_token() }}">
-    <title>@yield('title', 'Luminix - Learning Management System')</title>
+    <title>Luminix - @yield('title')</title>
 
     <!-- Tailwind CSS CDN -->
     <script src="https://cdn.tailwindcss.com"></script>
@@ -67,201 +67,137 @@
 
     <!-- Custom CSS -->
     <link rel="stylesheet" href="{{ asset('style.css') }}" />
+    <!-- Tambahkan di <head> layout utama -->
+    <script src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js" defer></script>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tailwindcss/typography@0.5.10/dist/typography.min.css" />
+
 
     @stack('styles')
 </head>
 
 <body class="bg-gray-50">
-    <!-- Top Navigation Bar -->
-    <nav class="bg-gray-900 text-gray-300 text-sm">
-        <div class="mx-auto px-4 py-3 flex justify-between items-center">
-            <div class="flex space-x-6">
-                <a href="{{ route('landing') }}"
-                    class="{{ request()->routeIs('landing') ? 'text-white border-b-2 border-orange-500 pb-3' : 'hover:text-white' }}">Home</a>
-                <a href="{{ route('courses.index') }}"
-                    class="{{ request()->routeIs('courses.*') ? 'text-white border-b-2 border-orange-500 pb-3' : 'hover:text-white' }}">Courses</a>
-                <a href="#" class="hover:text-white">About</a>
-                <a href="#" class="hover:text-white">Contact</a>
-            </div>
-            <div class="flex space-x-4">
-                <select class="bg-transparent border-none text-gray-300">
-                    <option>USD</option>
-                    <option>IDR</option>
-                    <option>EUR</option>
-                </select>
-                <select class="bg-transparent border-none text-gray-300">
-                    <option>English</option>
-                    <option>Indonesia</option>
-                </select>
-            </div>
-        </div>
-    </nav>
+    <header class="bg-white shadow-sm sticky top-0 z-50" x-data="{ openMenu: false }">
+        <div class="mx-auto  px-4 py-4">
+            <div class="flex items-center w-full">
 
-    <!-- Main Header -->
-    <header class="bg-white shadow-sm sticky top-0 z-50">
-        <div class="mx-auto px-4 py-4">
-            <div class="flex items-center justify-between">
-                <!-- Logo -->
-                <div class="flex items-center space-x-8">
-                    <a href="{{ route('landing') }}" class="flex items-center space-x-2">
-                        <div class="w-10 h-10 flex items-center justify-center">
-                            <img src="{{ asset('img/GraduationCap.svg') }}" alt="Luminix Logo" />
-                        </div>
-                        <span class="text-3xl font-bold text-primary-500 brand-logo">Luminix</span>
-                    </a>
+                <div class="flex items-center space-x-4 md:space-x-6">
 
-                    <!-- Search Bar -->
+                    <div class="flex items-center space-x-2">
+                        <a href="{{ route('landing') }}" class="flex items-center space-x-2">
+                            <div class="w-9 h-9 flex items-center justify-center">
+                                <img src="{{ asset('img/GraduationCap.svg') }}" alt="Luminix Logo" />
+                            </div>
+                            <span class="text-2xl md:text-3xl font-bold text-orange-500">Luminix</span>
+                        </a>
+                    </div>
+
                     <form action="{{ route('courses.search') }}" method="GET"
-                        class="flex bg-gray-50 px-4 py-2 w-96 border border-grey-100">
+                        class="hidden md:flex bg-gray-50 px-4 py-2 w-full md:w-96 border border-gray-200 rounded">
                         <i class="fas fa-search text-gray-500 mr-3 mt-1"></i>
-                        <input type="text" name="q" placeholder="What do you want learn..."
+                        <input type="text" name="q" placeholder="Search courses..."
                             class="bg-transparent border-none outline-none text-gray-800 w-full"
                             value="{{ request('q') }}" />
                     </form>
                 </div>
 
-                <!-- Right Actions -->
-                <div class="flex items-center space-x-6">
-                    @guest
+                <div class="flex items-center space-x-3 ml-auto">
+                    <button @click="openMenu = !openMenu" class="md:hidden text-gray-600 focus:outline-none">
+                        <i class="fas fa-bars text-2xl"></i>
+                    </button>
+
+                    <div class="hidden md:flex items-center space-x-2">
+                        @guest
+                            <a href="{{ route('register') }}"
+                                class="px-5 py-2 text-orange-500 border border-orange-500 hover:bg-orange-50 rounded transition">
+                                Sign Up
+                            </a>
+                            <a href="{{ route('login') }}"
+                                class="px-5 py-2 bg-orange-500 text-white hover:bg-orange-600 rounded transition">
+                                Sign In
+                            </a>
+                        @else
+                                            <div class="relative" x-data="{ open: false }">
+                                                <div @click="open = !open"
+                                                    class="w-10 h-10 rounded-full overflow-hidden border-2 border-gray-300 cursor-pointer">
+                                                    <img src="{{ Auth::user()->avatar
+                            ? asset('storage/' . Auth::user()->avatar)
+                            : 'https://ui-avatars.com/api/?name=' . urlencode(Auth::user()->name) }}"
+                                                        class="object-cover w-full h-full" alt="Avatar">
+                                                </div>
+
+                                                <div x-show="open" @click.away="open = false"
+                                                    class="absolute right-0 top-12 bg-white w-48 rounded-xl shadow-lg border border-gray-100 z-50">
+                                                    <a href="{{ route('dashboard') }}"
+                                                        class="flex items-center px-4 py-2 hover:bg-gray-50 text-gray-700">
+                                                        <i class="fa-solid fa-house mr-2"></i> Dashboard
+                                                    </a>
+                                                    <a href="{{ route('setting') }}"
+                                                        class="flex items-center px-4 py-2 hover:bg-gray-50 text-gray-700">
+                                                        <i class="fa-solid fa-gear mr-2"></i> Setting
+                                                    </a>
+                                                    <form method="POST" action="{{ route('logout') }}">
+                                                        @csrf
+                                                        <button type="submit"
+                                                            class="flex items-center w-full px-4 py-2 hover:bg-gray-50 text-gray-700">
+                                                            <i class="fa-solid fa-right-from-bracket mr-2"></i> Logout
+                                                        </button>
+                                                    </form>
+                                                </div>
+                                            </div>
+                        @endguest
+                    </div>
+                </div>
+            </div>
+
+            <div x-show="openMenu" x-transition class="md:hidden mt-3 space-y-4">
+                <form action="{{ route('courses.search') }}" method="GET"
+                    class="flex bg-gray-50 px-4 py-2 border border-gray-200 rounded">
+                    <i class="fas fa-search text-gray-500 mr-3 mt-1"></i>
+                    <input type="text" name="q" placeholder="Search courses..."
+                        class="bg-transparent border-none outline-none text-gray-800 w-full"
+                        value="{{ request('q') }}" />
+                </form>
+
+                @guest
+                    <div class="flex flex-col space-y-2">
                         <a href="{{ route('register') }}"
-                            class="px-6 py-2 text-orange-500 border border-orange-500 hover:bg-orange-50 transition">
-                            Create Account
+                            class="px-5 py-2 text-orange-500 border border-orange-500 text-center rounded hover:bg-orange-50">
+                            Sign Up
                         </a>
                         <a href="{{ route('login') }}"
-                            class="px-6 py-2 bg-orange-500 text-white hover:bg-orange-600 transition">
+                            class="px-5 py-2 bg-orange-500 text-white text-center rounded hover:bg-orange-600">
                             Sign In
                         </a>
-                    @else
-                        <a href="{{ route('dashboard') }}"
-                            class="px-6 py-2 text-orange-500 border border-orange-500 hover:bg-orange-50 transition">
-                            Dashboard
-                        </a>
-                        <form method="POST" action="{{ route('logout') }}" class="inline">
-                            @csrf
-                            <button type="submit" class="px-6 py-2 bg-orange-500 text-white hover:bg-orange-600 transition">
-                                Logout
-                            </button>
-                        </form>
-                    @endguest
-                </div>
+                    </div>
+                @else
+                    <a href="{{ route('dashboard') }}"
+                        class="block px-4 py-2 rounded hover:bg-gray-100 text-gray-700">Dashboard</a>
+                    <a href="{{ route('setting') }}"
+                        class="block px-4 py-2 rounded hover:bg-gray-100 text-gray-700">Setting</a>
+                    <form method="POST" action="{{ route('logout') }}">
+                        @csrf
+                        <button type="submit"
+                            class="w-full text-left px-4 py-2 rounded hover:bg-gray-100 text-gray-700">Logout</button>
+                    </form>
+                @endguest
             </div>
         </div>
     </header>
+
 
     <!-- Main Content -->
     @yield('content')
 
     <!-- Footer -->
-    <footer class="bg-gray-900 text-gray-400 py-16">
-        <div class="container mx-auto px-4">
-            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-8 mb-12">
-                <!-- Company Info -->
-                <div class="lg:col-span-1">
-                    <a href="{{ route('landing') }}" class="flex items-center space-x-2 mb-4">
-                        <div class="w-10 h-10 flex items-center justify-center">
-                            <img src="{{ asset('img/GraduationCap.svg') }}" alt="Luminix" />
-                        </div>
-                        <span class="text-3xl font-bold text-primary-500 brand-logo">Luminix</span>
-                    </a>
-                    <p class="text-sm mb-6">
-                        Aliquam rhoncus ligula est, non pulvinar elit convallis nec. Donec mattis odio at.
-                    </p>
-                    <div class="flex space-x-3">
-                        <a href="#"
-                            class="w-10 h-10 bg-gray-800 rounded flex items-center justify-center hover:bg-orange-500 transition">
-                            <i class="fab fa-facebook-f"></i>
-                        </a>
-                        <a href="#"
-                            class="w-10 h-10 bg-gray-800 rounded flex items-center justify-center hover:bg-orange-500 transition">
-                            <i class="fab fa-instagram"></i>
-                        </a>
-                        <a href="#"
-                            class="w-10 h-10 bg-gray-800 rounded flex items-center justify-center hover:bg-orange-600 transition">
-                            <i class="fab fa-linkedin-in"></i>
-                        </a>
-                        <a href="#"
-                            class="w-10 h-10 bg-gray-800 rounded flex items-center justify-center hover:bg-orange-500 transition">
-                            <i class="fab fa-twitter"></i>
-                        </a>
-                        <a href="#"
-                            class="w-10 h-10 bg-gray-800 rounded flex items-center justify-center hover:bg-orange-500 transition">
-                            <i class="fab fa-youtube"></i>
-                        </a>
-                    </div>
-                </div>
-
-                <!-- Top 4 Category -->
-                <div>
-                    <h3 class="text-white font-semibold mb-4">TOP 4 CATEGORY</h3>
-                    <ul class="space-y-3 text-sm">
-                        <li><a href="#" class="hover:text-orange-500 transition">Development</a></li>
-                        <li><a href="#" class="hover:text-orange-500 transition">Finance & Accounting</a></li>
-                        <li><a href="#" class="hover:text-orange-500 transition">Design</a></li>
-                        <li><a href="#" class="hover:text-orange-500 transition">Business</a></li>
-                    </ul>
-                </div>
-
-                <!-- Quick Links -->
-                <div>
-                    <h3 class="text-white font-semibold mb-4">QUICK LINKS</h3>
-                    <ul class="space-y-3 text-sm">
-                        <li><a href="#" class="hover:text-orange-500 transition">About</a></li>
-                        <li><a href="#" class="hover:text-orange-500 transition flex items-center gap-2">Become
-                                Instructor <i class="fas fa-arrow-right text-xs"></i></a></li>
-                        <li><a href="#" class="hover:text-orange-500 transition">Contact</a></li>
-                        <li><a href="#" class="hover:text-orange-500 transition">Career</a></li>
-                    </ul>
-                </div>
-
-                <!-- Support -->
-                <div>
-                    <h3 class="text-white font-semibold mb-4">SUPPORT</h3>
-                    <ul class="space-y-3 text-sm">
-                        <li><a href="#" class="hover:text-orange-500 transition">Help Center</a></li>
-                        <li><a href="#" class="hover:text-orange-500 transition">FAQs</a></li>
-                        <li><a href="#" class="hover:text-orange-500 transition">Terms & Condition</a></li>
-                        <li><a href="#" class="hover:text-orange-500 transition">Privacy Policy</a></li>
-                    </ul>
-                </div>
-
-                <!-- Download App -->
-                <div>
-                    <h3 class="text-white font-semibold mb-4">DOWNLOAD OUR APP</h3>
-                    <div class="space-y-3">
-                        <a href="#" class="flex items-center gap-3 bg-gray-800 p-3 hover:bg-gray-700 transition">
-                            <i class="fab fa-apple text-2xl"></i>
-                            <div>
-                                <div class="text-xs">Download now</div>
-                                <div class="text-sm font-semibold text-white">App Store</div>
-                            </div>
-                        </a>
-                        <a href="#" class="flex items-center gap-3 bg-gray-800 p-3 hover:bg-gray-700 transition">
-                            <i class="fab fa-google-play text-2xl"></i>
-                            <div>
-                                <div class="text-xs">Download now</div>
-                                <div class="text-sm font-semibold text-white">Play Store</div>
-                            </div>
-                        </a>
-                    </div>
-                </div>
-            </div>
-
+    <footer class="bg-gray-900 text-gray-400 pb-5">
+        <div class="justify-center mx-auto px-4">
             <!-- Bottom Footer -->
-            <div class="border-t border-gray-800 pt-8 flex flex-col md:flex-row justify-between items-center gap-4">
+            <div class="border-t border-gray-800 pt-8 flex flex-col md:flex-row justify-center items-center gap-4">
                 <p class="text-sm">
                     © {{ date('Y') }} - Luminix. Designed by <a href="#"
                         class="text-orange-500 hover:underline">Templatecookie</a>. All rights reserved
                 </p>
-                <div class="relative">
-                    <select
-                        class="bg-gray-800 text-gray-400 px-4 py-2 rounded border border-gray-700 appearance-none pr-10">
-                        <option>English</option>
-                        <option>Indonesia</option>
-                        <option>Spanish</option>
-                    </select>
-                    <i
-                        class="fas fa-chevron-down absolute right-3 top-1/2 transform -translate-y-1/2 text-xs pointer-events-none"></i>
-                </div>
+
             </div>
         </div>
     </footer>

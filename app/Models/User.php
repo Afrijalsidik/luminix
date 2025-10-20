@@ -50,6 +50,7 @@ class User extends Authenticatable implements FilamentUser
         ];
     }
 
+
     /**
      * Filament: Tentukan siapa yang bisa akses admin panel
      */

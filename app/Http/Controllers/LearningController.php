@@ -15,7 +15,7 @@ class LearningController extends Controller
      */
     public function index(Course $course)
     {
-        // Load chapters dengan order
+        // Load chapters dengan urutan
         $course->load([
             'chapters' => function ($query) {
                 $query->orderBy('order', 'asc');
@@ -36,10 +36,6 @@ class LearningController extends Controller
             ->pluck('chapter_id')
             ->toArray();
 
-        // dd($enrollment);
-        // dd($enrollment->enrolled_at);
-
-
         return view('learning.index', compact('course', 'enrollment', 'completedChapters'));
     }
 
@@ -53,7 +49,7 @@ class LearningController extends Controller
             abort(404);
         }
 
-        // Load relationships
+        // Load chapters dengan urutan
         $course->load([
             'chapters' => function ($query) {
                 $query->orderBy('order', 'asc');
@@ -65,7 +61,29 @@ class LearningController extends Controller
             ->where('course_id', $course->id)
             ->firstOrFail();
 
-        // Ambil atau buat progress untuk chapter ini
+        // VALIDASI: Cek apakah user boleh akses chapter ini
+        // User harus menyelesaikan chapter sebelumnya terlebih dahulu
+        if ($chapter->order > 1) {
+            // Cari chapter sebelumnya berdasarkan order
+            $chapterBeforeThis = Chapter::where('course_id', $course->id)
+                ->where('order', $chapter->order - 1)
+                ->first();
+
+            if ($chapterBeforeThis) {
+                $previousProgress = ChapterProgress::where('user_id', auth()->id())
+                    ->where('chapter_id', $chapterBeforeThis->id)
+                    ->first();
+
+                // Jika previous chapter belum selesai, redirect ke previous chapter
+                if (!$previousProgress || !$previousProgress->is_completed) {
+                    return redirect()
+                        ->route('learn.chapter', [$course->slug, $chapterBeforeThis->id])
+                        ->with('warning', 'Please complete the previous chapter first.');
+                }
+            }
+        }
+
+        // OTOMATIS TANDAI CHAPTER INI SEBAGAI SELESAI
         $progress = ChapterProgress::firstOrCreate(
             [
                 'user_id' => auth()->id(),
@@ -76,22 +94,33 @@ class LearningController extends Controller
             ]
         );
 
-        // Find previous and next chapters
-        $previousChapter = $course->chapters()
+        if (!$progress->is_completed) {
+            $progress->markAsCompleted();
+        }
+
+        // PERBAIKAN: ambil previous dan next chapter berdasarkan order yang benar
+        $previousChapter = Chapter::where('course_id', $course->id)
             ->where('order', '<', $chapter->order)
             ->orderBy('order', 'desc')
             ->first();
 
-        $nextChapter = $course->chapters()
+        $nextChapter = Chapter::where('course_id', $course->id)
             ->where('order', '>', $chapter->order)
             ->orderBy('order', 'asc')
             ->first();
 
-        return view('learning.chapter', compact('course', 'chapter', 'enrollment', 'progress', 'previousChapter', 'nextChapter'));
+        return view('learning.chapter', compact(
+            'course',
+            'chapter',
+            'enrollment',
+            'progress',
+            'previousChapter',
+            'nextChapter'
+        ));
     }
 
     /**
-     * Mark chapter as complete/incomplete
+     * Mark chapter as complete/incomplete (TIDAK DIGUNAKAN LAGI - OPSIONAL DIHAPUS)
      */
     public function markAsComplete(Request $request, Chapter $chapter)
     {
@@ -114,7 +143,7 @@ class LearningController extends Controller
             $message = 'Chapter marked as incomplete.';
         } else {
             $progress->markAsCompleted();
-            $message = 'Chapter completed! Great job! 🎉';
+            $message = 'Chapter completed! Great job!';
         }
 
         // Check if course is completed
@@ -123,10 +152,10 @@ class LearningController extends Controller
             ->first();
 
         if ($enrollment && $enrollment->isCompleted()) {
-            $message = '🎉 Congratulations! You have completed this course!';
+            $message = 'Congratulations! You have completed this course!';
         }
 
-        // Return JSON for AJAX or redirect for normal request
+        // Return JSON for AJAX or redirect
         if ($request->expectsJson()) {
             return response()->json([
                 'success' => true,
@@ -136,8 +165,6 @@ class LearningController extends Controller
             ]);
         }
 
-        return redirect()
-            ->back()
-            ->with('success', $message);
+        return redirect()->back()->with('success', $message);
     }
 }
