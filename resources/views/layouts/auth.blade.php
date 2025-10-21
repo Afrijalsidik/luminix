@@ -95,7 +95,7 @@
 <body class="font-sans text-gray-900 antialiased">
 
     <div class="relative min-h-screen flex flex-col justify-center items-center px-4 py-8 sm:px-6 lg:px-8 bg-parallax"
-        style="background-image: url({{ asset('/img/hero3.jpg') }});">
+        style="background-image: url({{ asset('/img/hero4.jpg') }});">
 
         <!-- Animated Overlay -->
         <div class="absolute inset-0 bg-gradient-to-br from-black/60 via-black/50 to-black/60"></div>
