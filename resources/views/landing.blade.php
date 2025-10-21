@@ -1,6 +1,6 @@
 @extends('layouts.frontend')
 
-@section('title', 'Home - Luminix ')
+@section('title', 'Home')
 
 @section('content')
     <!-- Hero Section -->
@@ -32,8 +32,7 @@
 
                 <!-- Right Image -->
                 <div class="relative mt-8 lg:mt-0">
-                    <img src="{{ asset('img/hero2.jpg') }}" alt="Student learning online"
-                        class="w-full h-auto rounded-2xl shadow-2xl" />
+                    <img src="{{ asset('img/hero3.jpg') }}" alt="Student" class="w-full h-auto rounded-2xl" />
                 </div>
             </div>
         </div>

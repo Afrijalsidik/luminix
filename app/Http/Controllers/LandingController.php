@@ -18,7 +18,7 @@ class LandingController extends Controller
             ->with(['category', 'instructor'])
             ->withCount('enrollments')
             ->latest()
-            ->limit(6)
+            ->limit(8)
             ->get();
 
         // Ambil semua kategori dengan jumlah kursus published

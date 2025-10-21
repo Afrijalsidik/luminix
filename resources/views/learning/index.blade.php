@@ -18,7 +18,8 @@
                         </a>
                         <div class="min-w-0 flex-1">
                             <h1 class="text-sm sm:text-base lg:text-xl font-bold text-gray-900 truncate leading-tight">
-                                {{ $course->title }}</h1>
+                                {{ $course->title }}
+                            </h1>
                             <p class="text-xs sm:text-sm text-gray-500 truncate mt-0.5">{{ $course->category->name }}</p>
                         </div>
                     </div>
@@ -85,12 +86,14 @@
                 <div class="grid grid-cols-2 lg:grid-cols-4 gap-2.5 sm:gap-3 lg:gap-4">
                     <div class="text-center p-3 sm:p-4 bg-orange-50 rounded-lg border border-orange-100">
                         <div class="text-xl sm:text-2xl lg:text-3xl font-bold text-orange-500">
-                            {{ $course->chapters->count() }}</div>
+                            {{ $course->chapters->count() }}
+                        </div>
                         <div class="text-xs sm:text-sm text-gray-600 mt-1">Total</div>
                     </div>
                     <div class="text-center p-3 sm:p-4 bg-green-50 rounded-lg border border-green-100">
                         <div class="text-xl sm:text-2xl lg:text-3xl font-bold text-green-600">
-                            {{ count($completedChapters) }}</div>
+                            {{ count($completedChapters) }}
+                        </div>
                         <div class="text-xs sm:text-sm text-gray-600 mt-1">Completed</div>
                     </div>
                     <div class="text-center p-3 sm:p-4 bg-yellow-50 rounded-lg border border-yellow-100">
